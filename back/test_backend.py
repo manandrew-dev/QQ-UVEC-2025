@@ -19,11 +19,13 @@ class SingleFileModularityAnalyzer:
     
     def __init__(self, file_path: str):
         self.file_path = Path(file_path)
+        print(file_path)
         if not self.file_path.exists():
             raise FileNotFoundError(f"File not found: {file_path}")
         if not self.file_path.suffix == '.py':
             raise ValueError(f"File must be a Python file: {file_path}")
         
+
         self.module_data = {
             'path': str(self.file_path),
             'ast_tree': None,
@@ -127,6 +129,7 @@ class SingleFileModularityAnalyzer:
         args = []
         for arg in node.args.args:
             args.append(arg.arg)
+        print(args)
         return args
     
     def _extract_calls(self, node: ast.FunctionDef) -> List[str]:
@@ -250,6 +253,8 @@ class SingleFileModularityAnalyzer:
                 'function_count': len(self.module_data['functions']),
                 'class_count': len(self.module_data['classes'])
             }
+
+            print(f"average complexity {average_complexity}\nmax {max_complexity}")
             
         except Exception as e:
             print(f"Error analyzing with Radon: {e}")

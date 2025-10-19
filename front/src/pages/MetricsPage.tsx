@@ -10,6 +10,14 @@ interface Suggestion {
     description?: string;
     functions?: { name: string; complexity: number; line: number }[];
     score?: number;
+    metrics?: {
+      function_count?: number;
+      class_count?: number;
+      average_complexity?: number;
+      max_complexity?: number;
+      maintainability?: number;
+      size?: number;
+    };
   };
   steps?: { type: string; description: string; [key: string]: any }[];
   estimated_impact?: Record<string, any>;
@@ -24,8 +32,8 @@ interface Metrics {
   max_complexity?: number;
   maintainability?: number;
   cohesion?: number;
-  suggestions?: Suggestion[];
   results?: Suggestion[];
+  suggestions?: Suggestion[];
 }
 
 interface MetricsPageProps {
@@ -48,42 +56,54 @@ function MetricsPage({ code }: MetricsPageProps) {
     );
   }
 
-  // 🧠 Extract suggestions (array inside `results`)
+  // 🧠 Determine whether suggestions exist
   const suggestions = Array.isArray(result)
     ? result
     : result.results || result.suggestions || [];
 
-  // 🧮 Derive metrics from suggestions if not top-level
+  // 🧮 Merge nested metrics into top-level values if available
   if (result && suggestions.length > 0) {
-    const complexityIssue = suggestions.find(
-      (s) => s.issue.type === "complex_functions"
-    );
-    const maintainabilityIssue = suggestions.find(
-      (s) => s.issue.type === "low_maintainability"
-    );
+    const summaryMetrics =
+      (suggestions.find((s) => s.issue.metrics) as Suggestion | undefined)
+        ?.issue.metrics || {};
 
     result.total_functions =
-      complexityIssue?.issue.functions?.length ?? result.total_functions ?? 0;
+      result.total_functions ??
+      summaryMetrics.function_count ??
+      result.total_functions ??
+      0;
+
+    result.total_classes =
+      result.total_classes ??
+      summaryMetrics.class_count ??
+      result.total_classes ??
+      0;
 
     result.average_complexity =
-      complexityIssue?.issue.functions?.[0]?.complexity ??
+      result.average_complexity ??
+      summaryMetrics.average_complexity ??
       result.average_complexity ??
       0;
 
     result.max_complexity =
-      complexityIssue?.issue.functions?.[0]?.complexity ??
+      result.max_complexity ??
+      summaryMetrics.max_complexity ??
       result.max_complexity ??
       0;
 
     result.maintainability =
-      maintainabilityIssue?.issue.score ??
+      result.maintainability ??
+      summaryMetrics.maintainability ??
       result.maintainability ??
       0;
 
-    // Optional fake filler values for display
-    result.total_classes = result.total_classes ?? 0;
+    result.sloc =
+      result.sloc ??
+      summaryMetrics.size ??
+      result.sloc ??
+      0;
+
     result.cohesion = result.cohesion ?? 0.7;
-    result.sloc = result.sloc ?? 200;
   }
 
   const hasMetrics =
@@ -124,7 +144,10 @@ function MetricsPage({ code }: MetricsPageProps) {
                 : "—"
             }
           />
-          <MetricCard label="Max Complexity" value={result.max_complexity ?? "—"} />
+          <MetricCard
+            label="Max Complexity"
+            value={result.max_complexity ?? "—"}
+          />
           <MetricCard label="Lines of Code" value={result.sloc ?? "—"} />
           <MetricCard
             label="Cohesion"

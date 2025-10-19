@@ -56,12 +56,10 @@ function MetricsPage({ code }: MetricsPageProps) {
     );
   }
 
-  // 🧠 Determine whether suggestions exist
   const suggestions = Array.isArray(result)
     ? result
     : result.results || result.suggestions || [];
 
-  // 🧮 Merge nested metrics into top-level values if available
   if (result && suggestions.length > 0) {
     const summaryMetrics =
       (suggestions.find((s) => s.issue.metrics) as Suggestion | undefined)
@@ -113,7 +111,6 @@ function MetricsPage({ code }: MetricsPageProps) {
 
   return (
     <div className="bg-neutral-900 text-white min-h-screen flex flex-col items-center px-8 py-12 space-y-8">
-      {/* Header */}
       <div className="text-center">
         <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 animate-rgb mb-4">
           Code Analysis Report
@@ -123,7 +120,6 @@ function MetricsPage({ code }: MetricsPageProps) {
         </p>
       </div>
 
-      {/* 📊 Metrics Grid */}
       {hasMetrics && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-5xl">
           <MetricCard label="Functions" value={result.total_functions ?? "—"} />
@@ -158,7 +154,6 @@ function MetricsPage({ code }: MetricsPageProps) {
         </div>
       )}
 
-      {/* 💻 Code Editor */}
       <div className="w-full max-w-6xl">
         <h2 className="text-2xl font-semibold mb-4 text-center">Your Code</h2>
         <CodeEditor
@@ -170,7 +165,6 @@ function MetricsPage({ code }: MetricsPageProps) {
         />
       </div>
 
-      {/* 🧩 Suggestions */}
       {suggestions.length > 0 && (
         <div className="w-full max-w-5xl mt-8">
           <h2 className="text-2xl font-semibold mb-4 text-center">
@@ -236,9 +230,6 @@ function MetricsPage({ code }: MetricsPageProps) {
 
 export default MetricsPage;
 
-/* --------------------------
-   Metric Card Component
--------------------------- */
 interface MetricCardProps {
   label: string;
   value: string | number;

@@ -20,15 +20,20 @@ Required to run the FastAPI server.
 
 ```bash
 npm install
-
-npm run dev
 ```
 Since we are using React to help with our frontend, you will need to install the necessary packages from react before being able to run the local server.
 
 ## How-to-Run
+# Backend
 ```bash
-
+uvicorn main:app --reload
 ```
+Run the backend first.
+# Frontend
+```bash
+npm run dev
+```
+While the backend is running, then run the frontend.
 
 ### Features
 - Simple accessible User Interface

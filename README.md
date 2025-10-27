@@ -40,7 +40,7 @@ While the backend is running, then run the frontend.
 - Interative code edititor 
 - File selector
 
-#  Usuage
+#  Usage
 For Computer Science Stuednts and other STEM majors who are passionite in improving their coding skills by seeing if their code could be more readable and maintainable. 
 
 # Visuals
